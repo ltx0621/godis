@@ -46,7 +46,7 @@ func Run(addr string) {
 	_ = cli.run()
 }
 
-// TODO client在server断联的情况下不能gently quit
+// TODO client在server断联的情况下不能gently quit，因为c.Read协程没有退出
 func (c *Client) run() error {
 	signal.Notify(c.OsSignals, syscall.SIGTERM, syscall.SIGINT)
 	go c.Read()
@@ -84,7 +84,6 @@ func (c *Client) Execute(cmd string) error {
 		c.exit()
 		return nil
 	}
-	log.Infoln(cmd)
 	_, err := c.Conn.Write(stringToRESP(cmd).ToBytes())
 	return err
 }
